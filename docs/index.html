@@ -1,35 +1,535 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generador de títulos/hooks YouTube - Crea contenido viral</title>
-  <link rel="canonical" href="https://aiarepita-cpu.github.io/site-youtube/">
-  <meta name="description" content="Genera títulos irresistibles, descripciones SEO y hashtags eficaces para tus videos de YouTube.">
-  <meta property="og:title" content="Generador de títulos/hooks YouTube">
-  <meta property="og:description" content="Crea títulos virales y descripciones optimizadas al instante.">
-  <meta property="og:url" content="https://aiarepita-cpu.github.io/site-youtube/">
-  <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary_large_image">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de títulos/hooks YouTube - Crea contenido viral</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a202c;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: bounceInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientText 3s ease infinite;
+        }
+
+        @keyframes gradientText {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            animation: slideInUp 0.8s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 18px;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .generate-btn:active {
+            transform: translateY(-1px) scale(1.01);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            margin-top: 30px;
+            display: none;
+            animation: fadeInScale 0.6s ease-out;
+        }
+
+        .result-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><pattern id="a" patternUnits="userSpaceOnUse" width="20" height="20" patternTransform="scale(0.5) rotate(45)"><rect width="100%" height="100%" fill="none"/><path d="M0 20L20 0H10L0 10M10 20H20V10" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23a)"/></svg>');
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .result-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .result-section h3::before {
+            content: '';
+            width: 6px;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.8);
+            margin-right: 15px;
+            border-radius: 3px;
+        }
+
+        .title-item, .description-item {
+            background: rgba(255, 255, 255, 0.95);
+            color: #2d3748;
+            padding: 18px 25px;
+            margin: 12px 0;
+            border-radius: 15px;
+            border-left: 5px solid #4ecdc4;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .title-item:hover, .description-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-left-color: #ff6b6b;
+        }
+
+        .hashtags {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hashtag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .hashtag:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 18px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pack-pro {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+        }
+
+        .kofi {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes bounceInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-60px) scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(0px) scale(1.05);
+            }
+            70% {
+                transform: translateY(-10px) scale(0.9);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .main-content {
+                padding: 25px;
+                margin: 0 10px;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .title-item:hover, .description-item:hover {
+                transform: none;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="footer-links">
-    <a href="https://aiarepita.gumroad.com/l/1000-titulos-hooks" class="cta-btn pack-pro" target="_blank">🔥 Pack Pro - Contenido Premium</a>
-  </div>
-  <div class="footer-links" style="margin-top:20px">
-    <a class="cta-btn" style="background:#111827;color:#fff" href="https://aiarepita-cpu.github.io/site-root/">🏠 Home</a>
-    <a class="cta-btn" style="background:#1f2937;color:#fff" href="https://aiarepita-cpu.github.io/site-empleo/">💼 Empleo</a>
-    <a class="cta-btn" style="background:#1f2937;color:#fff" href="https://aiarepita-cpu.github.io/site-shopify/">🛍️ Shopify</a>
-  </div>
-  <script type="application/ld+json">{
-  "@context":"https://schema.org",
-  "@type":"SoftwareApplication",
-  "name":"Generador de títulos/hooks YouTube",
-  "applicationCategory":"MarketingApplication",
-  "operatingSystem":"Web",
-  "url":"https://aiarepita-cpu.github.io/site-youtube/",
-  "offers":{"@type":"Offer","price":"0","priceCurrency":"EUR","category":"Free","url":"https://aiarepita.gumroad.com/l/1000-titulos-hooks"},
-  "creator":{"@type":"Organization","name":"aiarepita"}
-}</script>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Generador de títulos/hooks YouTube</h1>
+            <p>Crea títulos irresistibles y descripciones SEO que harán que tu contenido se vuelva viral y aumente tus visualizaciones</p>
+        </div>
+
+        <div class="main-content">
+            <form id="generatorForm" class="form-section">
+                <div class="form-group">
+                    <label for="videoTopic">🎯 Tema del video</label>
+                    <input type="text" id="videoTopic" placeholder="Ej: Cómo ganar dinero online, Recetas fáciles, Tutoriales de gaming...">
+                </div>
+
+                <div class="form-group">
+                    <label for="keywords">🔑 Palabras clave (opcional)</label>
+                    <input type="text" id="keywords" placeholder="Ej: tutorial, principiantes, 2024, fácil, rápido...">
+                </div>
+
+                <button type="submit" class="generate-btn pulse">✨ Generar Contenido Viral</button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generando títulos irresistibles y contenido optimizado...</p>
+            </div>
+
+            <div class="results" id="results">
+                <div class="result-section">
+                    <h3>🎬 Títulos YouTube</h3>
+                    <div id="titles"></div>
+                </div>
+
+                <div class="result-section">
+                    <h3>📝 Descripciones SEO</h3>
+                    <div id="descriptions"></div>
+                </div>
+
+                <div class="result-section">
+                    <h3>📱 Hashtags sugeridos</h3>
+                    <div id="hashtags" class="hashtags"></div>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <a href="https://aiarepita.gumroad.com/l/pack-pro-cv-linkedin" class="cta-btn pack-pro" target="_blank">
+                    🔥 Pack Pro - Contenido Premium
+                </a>
+                <a href="https://ko-fi.com/placeholder" class="cta-btn kofi" target="_blank">
+                    ☕ Apóyanos en Ko-fi
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('generatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const videoTopic = document.getElementById('videoTopic').value.trim();
+            
+            if (!videoTopic) {
+                alert('Por favor, ingresa el tema de tu video.');
+                return;
+            }
+            
+            const keywords = document.getElementById('keywords').value.trim();
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            
+            // Simulate AI processing
+            setTimeout(() => {
+                generateContent(videoTopic, keywords);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            }, 2500);
+        });
+
+        function generateContent(topic, keywords) {
+            const titleTemplates = [
+                "❌ NUNCA hagas esto: [TOPIC] (Te explico por qué)",
+                "✅ La ÚNICA forma de [TOPIC] que realmente funciona",
+                "🤯 [TOPIC]: El truco que los expertos NO quieren que sepas",
+                "⚡ [TOPIC] en 5 minutos (Método revolucionario)",
+                "💰 Gané $10,000 con [TOPIC] - Te muestro cómo",
+                "🔥 [TOPIC]: De principiante a experto en 30 días",
+                "😱 Esto cambió mi vida: [TOPIC] explicado paso a paso"
+            ];
+
+            const descriptionTemplates = [
+                "En este video te explico todo sobre [TOPIC] de manera sencilla y práctica. Descubrirás los secretos que realmente funcionan y evitarás los errores más comunes. ¡No te pierdas esta guía completa!",
+                "¿Quieres dominar [TOPIC]? Este tutorial te llevará de cero a experto con métodos probados y resultados garantizados. Incluye tips exclusivos que no encontrarás en ningún otro lado.",
+                "La guía más completa sobre [TOPIC] que encontrarás en YouTube. Con ejemplos reales, casos de éxito y estrategias que puedes aplicar hoy mismo para obtener resultados increíbles."
+            ];
+
+            const hashtagsPool = [
+                "#youtube", "#viral", "#tutorial", "#2024", "#consejos", 
+                "#tips", "#trucosyucos", "#principiantes", "#facil", "#rapido",
+                "#exito", "#motivacion", "#emprendimiento", "#dinero", "#negocio",
+                "#tecnologia", "#innovacion", "#aprender", "#educacion", "#gratis"
+            ];
+
+            // Generate titles
+            const selectedTitles = shuffleArray(titleTemplates).slice(0, 6)
+                .map(template => template.replace('[TOPIC]', topic));
+
+            // Generate descriptions  
+            const selectedDescriptions = shuffleArray(descriptionTemplates).slice(0, 3)
+                .map(template => template.replace('[TOPIC]', topic));
+
+            // Generate hashtags
+            let selectedHashtags = shuffleArray(hashtagsPool).slice(0, 8);
+            
+            // Add topic-related hashtags if keywords provided
+            if (keywords) {
+                const keywordArray = keywords.split(',').map(k => k.trim()).filter(k => k);
+                const keywordHashtags = keywordArray.map(k => `#${k.toLowerCase().replace(/\s+/g, '')}`);
+                selectedHashtags = [...new Set([...selectedHashtags, ...keywordHashtags])].slice(0, 10);
+            }
+
+            // Display results
+            document.getElementById('titles').innerHTML = selectedTitles
+                .map(title => `<div class="title-item">${title}</div>`).join('');
+                
+            document.getElementById('descriptions').innerHTML = selectedDescriptions
+                .map(desc => `<div class="description-item">${desc}</div>`).join('');
+                
+            document.getElementById('hashtags').innerHTML = selectedHashtags
+                .map(hashtag => `<span class="hashtag">${hashtag}</span>`).join('');
+
+            // Add click to copy functionality
+            addCopyFunctionality();
+        }
+
+        function addCopyFunctionality() {
+            document.querySelectorAll('.title-item, .description-item, .hashtag').forEach(item => {
+                item.addEventListener('click', function() {
+                    navigator.clipboard.writeText(this.textContent).then(() => {
+                        const originalBg = this.style.background;
+                        this.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                        this.style.color = 'white';
+                        
+                        setTimeout(() => {
+                            this.style.background = originalBg;
+                            this.style.color = '';
+                        }, 1000);
+                    });
+                });
+            });
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+    </script>
 </body>
 </html>
